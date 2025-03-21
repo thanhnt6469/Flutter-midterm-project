@@ -10,11 +10,11 @@ class FirebaseOptionsConfig {
     storageBucket: "testfirebase-129ef.firebasestorage.app",
   );
 
-  static final FirebaseOptions options2 = FirebaseOptions(
-    apiKey: "AIzaSyABJv7San6Prrel8YB0z5wbVCmKPmgOM3k",
-    appId: "1:758763062278:android:8323725b8be04f69182f87",
-    messagingSenderId: "758763062278",
-    projectId: "findhomeapp-f35c6",
-    storageBucket: "findhomeapp-f35c6.appspot.com",
-  );
+  // static final FirebaseOptions options2 = FirebaseOptions(
+  //   apiKey: "AIzaSyABJv7San6Prrel8YB0z5wbVCmKPmgOM3k",
+  //   appId: "1:758763062278:android:8323725b8be04f69182f87",
+  //   messagingSenderId: "758763062278",
+  //   projectId: "findhomeapp-f35c6",
+  //   storageBucket: "findhomeapp-f35c6.appspot.com",
+  // );
 }

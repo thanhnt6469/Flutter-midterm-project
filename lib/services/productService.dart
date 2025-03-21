@@ -62,50 +62,19 @@ class ProductService{
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  CupertinoTextField(
-                    controller: _nameController,
-                    placeholder: 'Tên sản phẩm',
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.white,
-                      border: Border.all(color: CupertinoColors.lightBackgroundGray),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    style: const TextStyle(color: CupertinoColors.label),
-                  ),
-                  const SizedBox(height: 10),
-                  CupertinoTextField(
-                    controller: _categoryController,
-                    placeholder: 'Loại sản phẩm',
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.white,
-                      border: Border.all(color: CupertinoColors.lightBackgroundGray),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    style: const TextStyle(color: CupertinoColors.label),
-                  ),
-                  const SizedBox(height: 10),
-                  CupertinoTextField(
-                    controller: _priceController,
-                    keyboardType: TextInputType.number,
-                    placeholder: 'Giá',
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.white,
-                      border: Border.all(color: CupertinoColors.lightBackgroundGray),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    style: const TextStyle(color: CupertinoColors.label),
-                  ),
-
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CupertinoTextField(
-                          controller: _imageController,
-                          placeholder: 'Hình ảnh (url/tùy chọn)',
+                  FormField<String>(
+                    validator: (value) {
+                      if (_nameController.text.trim().isEmpty) {
+                        return 'Tên sản phẩm không được để trống';
+                      }
+                      return null;
+                    },
+                    builder: (field) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CupertinoTextField(
+                          controller: _nameController,
+                          placeholder: 'Tên sản phẩm',
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: CupertinoColors.white,
@@ -113,24 +82,143 @@ class ProductService{
                             borderRadius: BorderRadius.circular(8),
                           ),
                           style: const TextStyle(color: CupertinoColors.label),
+                          onChanged: (_) => field.didChange(_nameController.text),
                         ),
-                      ),
-                      CupertinoButton(
-                        child: const Icon(CupertinoIcons.arrow_up_doc),
-                        onPressed: () async {
-                          FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
-                          if (result != null) {
-                            File file = File(result.files.single.path!);
-                            String? downloadUrl = await _uploadImageToFirebase2(file);
-                            if (downloadUrl != null) {
-                              _imageController.text = downloadUrl;
-                            }
-                          }
-                        },
-                      ),
-                    ],
+                        if (field.errorText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              field.errorText!,
+                              style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-
+                  const SizedBox(height: 10),
+                  FormField<String>(
+                    validator: (value) {
+                      if (_categoryController.text.trim().isEmpty) {
+                        return 'Loại sản phẩm không được để trống';
+                      }
+                      return null;
+                    },
+                    builder: (field) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CupertinoTextField(
+                          controller: _categoryController,
+                          placeholder: 'Loại sản phẩm',
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.white,
+                            border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          style: const TextStyle(color: CupertinoColors.label),
+                          onChanged: (_) => field.didChange(_categoryController.text),
+                        ),
+                        if (field.errorText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              field.errorText!,
+                              style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  FormField<String>(
+                    validator: (value) {
+                      if (_priceController.text.trim().isEmpty) {
+                        return 'Giá không được để trống';
+                      }
+                      if (double.tryParse(_priceController.text) == null) {
+                        return 'Giá phải là một số hợp lệ';
+                      }
+                      return null;
+                    },
+                    builder: (field) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CupertinoTextField(
+                          controller: _priceController,
+                          keyboardType: TextInputType.number,
+                          placeholder: 'Giá',
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.white,
+                            border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          style: const TextStyle(color: CupertinoColors.label),
+                          onChanged: (_) => field.didChange(_priceController.text),
+                        ),
+                        if (field.errorText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              field.errorText!,
+                              style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  FormField<String>(
+                    validator: (value) {
+                      if (_imageController.text.trim().isEmpty) {
+                        return 'Url không được để trống';
+                      }
+                      return null;
+                    },
+                    builder: (field) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CupertinoTextField(
+                                controller: _imageController,
+                                placeholder: 'Hình ảnh (url/tùy chọn)',
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: CupertinoColors.white,
+                                  border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                style: const TextStyle(color: CupertinoColors.label),
+                              ),
+                            ),
+                            CupertinoButton(
+                              child: const Icon(CupertinoIcons.arrow_up_doc),
+                              onPressed: () async {
+                                FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
+                                if (result != null) {
+                                  File file = File(result.files.single.path!);
+                                  String? downloadUrl = await _uploadImageToFirebase2(file);
+                                  if (downloadUrl != null) {
+                                    _imageController.text = downloadUrl;
+                                  }
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        if (field.errorText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              field.errorText!,
+                              style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -156,49 +244,40 @@ class ProductService{
                               });
                               await newProduct.update({'idsanpham': newProduct.id});
                               if (context.mounted) {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
+                                Navigator.of(context, rootNavigator: true).pop();
                                 showCupertinoDialog(
                                   context: context,
-                                  builder: (context) =>
-                                    CupertinoAlertDialog(
-                                      title: const Text("Thông báo"),
-                                      content: const Text(
-                                          "Sản phẩm đã được thêm thành công!"),
-                                      actions: [
-                                        CupertinoDialogAction(
-                                          child: const Text("OK"),
-                                          onPressed: () {
-                                            Navigator.of(
-                                                context, rootNavigator: true)
-                                                .pop();
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                                  builder: (context) => CupertinoAlertDialog(
+                                    title: const Text("Thông báo"),
+                                    content: const Text("Sản phẩm đã được thêm thành công!"),
+                                    actions: [
+                                      CupertinoDialogAction(
+                                        child: const Text("OK"),
+                                        onPressed: () {
+                                          Navigator.of(context, rootNavigator: true).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
+                                Navigator.of(context, rootNavigator: true).pop();
                                 showCupertinoDialog(
                                   context: context,
-                                  builder: (context) =>
-                                    CupertinoAlertDialog(
-                                      title: const Text("Thông báo"),
-                                      content: Text("Lỗi khi thêm sản phẩm: $e"),
-                                      actions: [
-                                        CupertinoDialogAction(
-                                          child: const Text("OK"),
-                                          onPressed: () {
-                                            Navigator.of(
-                                                context, rootNavigator: true)
-                                                .pop();
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                                  builder: (context) => CupertinoAlertDialog(
+                                    title: const Text("Thông báo"),
+                                    content: Text("Lỗi khi thêm sản phẩm: $e"),
+                                    actions: [
+                                      CupertinoDialogAction(
+                                        child: const Text("OK"),
+                                        onPressed: () {
+                                          Navigator.of(context, rootNavigator: true).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               }
                             }
@@ -215,6 +294,7 @@ class ProductService{
       },
     );
   }
+
 
   static Future<void> editProduct(BuildContext context, DocumentSnapshot product) async {
     final _formKey = GlobalKey<FormState>();
@@ -236,49 +316,19 @@ class ProductService{
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  CupertinoTextField(
-                    controller: _nameController,
-                    placeholder: 'Tên sản phẩm',
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.white,
-                      border: Border.all(color: CupertinoColors.lightBackgroundGray),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    style: const TextStyle(color: CupertinoColors.label),
-                  ),
-                  const SizedBox(height: 10),
-                  CupertinoTextField(
-                    controller: _categoryController,
-                    placeholder: 'Loại sản phẩm',
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.white,
-                      border: Border.all(color: CupertinoColors.lightBackgroundGray),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    style: const TextStyle(color: CupertinoColors.label),
-                  ),
-                  const SizedBox(height: 10),
-                  CupertinoTextField(
-                    controller: _priceController,
-                    keyboardType: TextInputType.number,
-                    placeholder: 'Giá',
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.white,
-                      border: Border.all(color: CupertinoColors.lightBackgroundGray),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    style: const TextStyle(color: CupertinoColors.label),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CupertinoTextField(
-                          controller: _imageController,
-                          placeholder: 'Hình ảnh (url/tùy chọn)',
+                  FormField<String>(
+                    validator: (value) {
+                      if (_nameController.text.trim().isEmpty) {
+                        return 'Tên sản phẩm không được để trống';
+                      }
+                      return null;
+                    },
+                    builder: (field) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CupertinoTextField(
+                          controller: _nameController,
+                          placeholder: 'Tên sản phẩm',
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: CupertinoColors.white,
@@ -286,22 +336,177 @@ class ProductService{
                             borderRadius: BorderRadius.circular(8),
                           ),
                           style: const TextStyle(color: CupertinoColors.label),
+                          onChanged: (_) => field.didChange(_nameController.text),
                         ),
-                      ),
-                      CupertinoButton(
-                        child: const Icon(CupertinoIcons.arrow_up_doc),
-                        onPressed: () async {
-                          FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
-                          if (result != null) {
-                            File file = File(result.files.single.path!);
-                            String? downloadUrl = await _uploadImageToFirebase2(file);
-                            if (downloadUrl != null) {
-                              _imageController.text = downloadUrl;
-                            }
-                          }
-                        },
-                      ),
-                    ],
+                        if (field.errorText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              field.errorText!,
+                              style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  // CupertinoTextField(
+                  //   controller: _nameController,
+                  //   placeholder: 'Tên sản phẩm',
+                  //   padding: const EdgeInsets.all(12),
+                  //   decoration: BoxDecoration(
+                  //     color: CupertinoColors.white,
+                  //     border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                  //     borderRadius: BorderRadius.circular(8),
+                  //   ),
+                  //   style: const TextStyle(color: CupertinoColors.label),
+                  // ),
+                  const SizedBox(height: 10),
+                  FormField<String>(
+                    validator: (value) {
+                      if (_categoryController.text.trim().isEmpty) {
+                        return 'Loại sản phẩm không được để trống';
+                      }
+                      return null;
+                    },
+                    builder: (field) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CupertinoTextField(
+                          controller: _categoryController,
+                          placeholder: 'Loại sản phẩm',
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.white,
+                            border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          style: const TextStyle(color: CupertinoColors.label),
+                          onChanged: (_) => field.didChange(_categoryController.text),
+                        ),
+                        if (field.errorText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              field.errorText!,
+                              style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  FormField<String>(
+                    validator: (value) {
+                      if (_priceController.text.trim().isEmpty) {
+                        return 'Giá không được để trống';
+                      }
+                      if (double.tryParse(_priceController.text) == null) {
+                        return 'Giá phải là một số hợp lệ';
+                      }
+                      return null;
+                    },
+                    builder: (field) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CupertinoTextField(
+                          controller: _priceController,
+                          keyboardType: TextInputType.number,
+                          placeholder: 'Giá',
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: CupertinoColors.white,
+                            border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          style: const TextStyle(color: CupertinoColors.label),
+                          onChanged: (_) => field.didChange(_priceController.text),
+                        ),
+                        if (field.errorText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              field.errorText!,
+                              style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  // CupertinoTextField(
+                  //   controller: _categoryController,
+                  //   placeholder: 'Loại sản phẩm',
+                  //   padding: const EdgeInsets.all(12),
+                  //   decoration: BoxDecoration(
+                  //     color: CupertinoColors.white,
+                  //     border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                  //     borderRadius: BorderRadius.circular(8),
+                  //   ),
+                  //   style: const TextStyle(color: CupertinoColors.label),
+                  // ),
+                  // const SizedBox(height: 10),
+                  // CupertinoTextField(
+                  //   controller: _priceController,
+                  //   keyboardType: TextInputType.number,
+                  //   placeholder: 'Giá',
+                  //   padding: const EdgeInsets.all(12),
+                  //   decoration: BoxDecoration(
+                  //     color: CupertinoColors.white,
+                  //     border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                  //     borderRadius: BorderRadius.circular(8),
+                  //   ),
+                  //   style: const TextStyle(color: CupertinoColors.label),
+                  // ),
+                  const SizedBox(height: 10),
+                  FormField<String>(
+                    validator: (value) {
+                      if (_imageController.text.trim().isEmpty) {
+                        return 'Url không được để trống';
+                      }
+                      return null;
+                    },
+                    builder: (field) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CupertinoTextField(
+                                controller: _imageController,
+                                placeholder: 'Hình ảnh (url/tùy chọn)',
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: CupertinoColors.white,
+                                  border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                style: const TextStyle(color: CupertinoColors.label),
+                              ),
+                            ),
+                            CupertinoButton(
+                              child: const Icon(CupertinoIcons.arrow_up_doc),
+                              onPressed: () async {
+                                FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image);
+                                if (result != null) {
+                                  File file = File(result.files.single.path!);
+                                  String? downloadUrl = await _uploadImageToFirebase2(file);
+                                  if (downloadUrl != null) {
+                                    _imageController.text = downloadUrl;
+                                  }
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        if (field.errorText != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              field.errorText!,
+                              style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Row(
